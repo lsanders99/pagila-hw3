@@ -19,5 +19,24 @@
  *    I did this by using the SELECT DISTINCT clause.
  */
 
+-- What movies have those customers rented before?
 
+
+SELECT title
+FROM film
+INNER JOIN inventory USING (film_id)
+INNER JOIN rental USING (inventory_id)
+WHERE customer_id IN (
+    SELECT distinct(customer_id)
+    FROM rental
+    INNER JOIN inventory USING (inventory_id)
+    WHERE film_id IN (
+        SELECT film_id
+        FROM film
+        WHERE film_id = 103
+    )
+) and film_id != 103
+GROUP BY film_id, title
+HAVING count(distinct(customer_id)) >= 3
+ORDER BY title;
 
